@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111923">
+<title>Frontline — стратегический прототип</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">F</span><div><b>FRONTLINE</b><small>СТРАТЕГИЧЕСКИЙ ПРОТОТИП</small></div></div>
+    <div class="top-status"><span id="dateLabel">24 февраля 2022</span><span class="dot"></span><span id="speedLabel">Пауза</span></div>
+    <button id="saveBtn" class="small-btn">Сохранить</button>
+  </header>
+
+  <section id="startScreen" class="start-screen">
+    <div class="start-card">
+      <div class="eyebrow">НОВАЯ КАМПАНИЯ</div>
+      <h1>Управляй фронтом.<br><span>Принимай решения.</span></h1>
+      <p>Мобильная стратегическая песочница: карта, подразделения, снабжение, пополнение, события и ИИ. Используются вымышленные стороны и условная карта.</p>
+      <label for="sideSelect">Сторона игрока</label>
+      <select id="sideSelect"><option value="north">Северная коалиция</option><option value="south">Южная коалиция</option></select>
+      <label for="scenarioSelect">Сценарий</label>
+      <select id="scenarioSelect">
+        <option value="opening">Начальный кризис — 24.02.2022</option>
+        <option value="stalemate">Затяжное противостояние — 01.09.2023</option>
+        <option value="custom">Свободный старт — настройка даты</option>
+      </select>
+      <div id="customDateWrap" class="hidden"><label for="customDate">Дата начала</label><input id="customDate" type="date" value="2024-01-01"></div>
+      <button id="startBtn" class="primary-btn">Начать кампанию</button>
+      <div class="start-note">Прототип · прогресс сохраняется в этом браузере</div>
+    </div>
+  </section>
+
+  <main id="gameScreen" class="hidden">
+    <div class="toolbar">
+      <div class="toolbar-left"><button id="pauseBtn" class="tool-btn">▶ Продолжить</button><button id="dayBtn" class="tool-btn">Пропустить день</button><button id="scenarioBtn" class="tool-btn">Сценарии</button></div>
+      <div class="toolbar-right"><span class="chip">День <b id="dayCount">1</b></span><span class="chip">Стабильность <b id="stability">72%</b></span></div>
+    </div>
+    <div class="layout">
+      <section class="map-panel panel">
+        <div class="panel-heading"><div><b>Оперативная карта</b><small>Условный регион · масштабирование жестом/колёсиком</small></div><div class="map-tools"><button id="zoomOut" aria-label="Уменьшить">−</button><button id="zoomIn" aria-label="Увеличить">+</button><button id="resetView">Сброс</button></div></div>
+        <div id="mapViewport">
+          <div id="mapWorld">
+            <svg id="mapSvg" viewBox="0 0 1000 650" role="img" aria-label="Условная карта региона">
+              <defs>
+                <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M 34 0 L 0 0 0 34" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="1"/></pattern>
+                <pattern id="forest" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M12 3 L5 17 L19 17 Z" fill="#5c7860" opacity=".34"/></pattern>
+              </defs>
+              <rect width="1000" height="650" fill="#263943"/>
+              <path d="M0 0H1000V650H0Z" fill="url(#grid)"/>
+              <path d="M0 55 L160 20 250 70 360 42 480 100 600 62 730 90 860 40 1000 85V0H0Z" fill="#5c6e5c" opacity=".65"/>
+              <path d="M0 450 L120 400 220 450 310 420 420 500 550 460 650 530 780 480 900 540 1000 500V650H0Z" fill="#5c6e5c" opacity=".65"/>
+              <path d="M70 110 C160 140 140 210 240 230 S390 170 470 260 S640 340 710 270 S860 200 950 260" fill="none" stroke="#6ca6c5" stroke-width="16" opacity=".65"/>
+              <path d="M70 110 C160 140 140 210 240 230 S390 170 470 260 S640 340 710 270 S860 200 950 260" fill="none" stroke="#b7d9e7" stroke-width="2" opacity=".7"/>
+              <path d="M80 50 L160 160 240 230 330 330 410 400 480 520 560 610" fill="none" stroke="#c2b69b" stroke-width="7" stroke-dasharray="2 9" opacity=".9"/>
+              <path d="M800 30 L730 130 710 270 780 370 850 460 920 620" fill="none" stroke="#c2b69b" stroke-width="7" stroke-dasharray="2 9" opacity=".9"/>
+              <path d="M100 300 L220 270 330 330 450 300 570 370 700 340 820 400 950 380" fill="none" stroke="#d1c4a5" stroke-width="3" opacity=".7"/>
+              <path d="M80 80 L260 80 390 145 520 130 650 170 820 120 930 160 L950 330 870 420 780 560 590 590 430 520 280 540 130 460 70 300Z" fill="url(#forest)" opacity=".65"/>
+              <g class="region-labels">
+                <text x="160" y="110">СЕВЕРНЫЕ РАВНИНЫ</text><text x="385" y="220">ЦЕНТРАЛЬНЫЙ РЕГИОН</text><text x="700" y="160">ВОСТОЧНЫЙ КРАЙ</text><text x="260" y="475">ЮЖНЫЕ ВЫСОТЫ</text>
+              </g>
+              <g id="townLayer"></g>
+              <g id="frontLayer"></g>
+              <g id="unitLayer"></g>
+            </svg>
+          </div>
+          <div class="map-legend"><span><i class="legend-dot north"></i> Северная коалиция</span><span><i class="legend-dot south"></i> Южная коалиция</span><span><i class="legend-line"></i> Линия контроля</span></div>
+          <div id="mapHint" class="map-hint">Выбери подразделение на карте или в списке</div>
+        </div>
+      </section>
+      <aside class="side-column">
+        <section class="panel force-panel">
+          <div class="panel-heading"><div><b>Подразделения</b><small id="sideName">Северная коалиция</small></div><button id="newUnitBtn" class="accent-btn">+ Создать</button></div>
+          <div class="unit-filters"><button class="filter active" data-filter="all">Все</button><button class="filter" data-filter="north">Север</button><button class="filter" data-filter="south">Юг</button></div>
+          <div id="unitList" class="unit-list"></div>
+        </section>
+        <section id="selectedPanel" class="panel selected-panel">
+          <div class="panel-heading"><div><b>Карточка подразделения</b><small>Выбери подразделение</small></div></div>
+          <div id="selectedContent" class="empty-state">Нажми на значок на карте или на карточку в списке.</div>
+        </section>
+      </aside>
+    </div>
+    <div class="bottom-grid">
+      <section class="panel">
+        <div class="panel-heading"><div><b>Снабжение и пополнение</b><small>Абстрактные игровые показатели</small></div></div>
+        <div class="logistics-grid">
+          <div class="metric"><span>Общее снабжение</span><b id="supplyMetric">74%</b><div class="meter"><i id="supplyMeter"></i></div></div>
+          <div class="metric"><span>Резерв личного состава</span><b id="reserveMetric">12 000</b><div class="meter"><i id="reserveMeter"></i></div></div>
+          <div class="metric"><span>Состояние частей</span><b id="readinessMetric">68%</b><div class="meter"><i id="readinessMeter"></i></div></div>
+        </div>
+        <div class="actions-row"><button id="replenishBtn" class="tool-btn">Пополнить выбранную часть</button><button id="supplyBtn" class="tool-btn">Восстановить снабжение</button></div>
+      </section>
+      <section class="panel">
+        <div class="panel-heading"><div><b>Политические решения и события</b><small>Влияют на стабильность и состояние частей</small></div><span class="live-pill">ЖУРНАЛ</span></div>
+        <div id="eventList" class="event-list"></div>
+        <div class="actions-row"><button id="decisionBtn" class="tool-btn">Принять решение</button><button id="clearLogBtn" class="tool-btn">Очистить журнал</button></div>
+      </section>
+    </div>
+    <footer class="footer"><span>FRONTLINE prototype 0.1</span><span>Автосохранение включено</span><button id="menuBtn">В главное меню</button></footer>
+  </main>
+
+  <div id="modalBackdrop" class="modal-backdrop hidden">
+    <div class="modal panel">
+      <div class="panel-heading"><div><b id="modalTitle">Окно</b><small id="modalSubtitle"></small></div><button id="closeModal" class="close-btn">×</button></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
